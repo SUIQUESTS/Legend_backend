@@ -23,7 +23,7 @@ export const submitToChallenge = async (id, data) => {
   if (challenge.status === "completed") throw new Error("Challenge is closed");
 
   return await Submission.create({
-    challengeId: id,
+    challenge: id,
     participant_address: data.participant_address,
     submission_link: data.submission_link,
   });
