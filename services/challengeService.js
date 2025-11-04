@@ -31,7 +31,7 @@ export const submitToChallenge = async (id, data) => {
 
 export const getSubmissionsByUser = async (walletAddress) => {
   return await Submission.find({ participant_address: walletAddress })
-    .populate("challengeId", "title status");
+    .populate("challenge", "title status");
 };
 
 export const completeChallenge = async (id) => {
