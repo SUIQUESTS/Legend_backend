@@ -22,11 +22,15 @@ export const submitToChallenge = async (id, data) => {
   if (!challenge) throw new Error("Challenge not found");
   if (challenge.status === "completed") throw new Error("Challenge is closed");
 
-  return await Submission.create({
+  const submission = await Submission.create({
     challenge: id,
     participant_address: data.participant_address,
     submission_link: data.submission_link,
   });
+   challenge.submissions.push(submission._id);
+   await challenge.save();
+
+   return submission;
 };
 
 export const getSubmissionsByUser = async (walletAddress) => {
