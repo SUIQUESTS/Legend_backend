@@ -10,11 +10,9 @@ export const getAllChallenges = async () => {
 };
 
 export const getChallengeById = async (id) => {
-  const challenge = await Challenge.findById(id);
+  const challenge = await Challenge.findById(id).populate("submissions");
   if (!challenge) throw new Error("Challenge not found");
-
-  const submissions = await Submission.find({ challengeId: id });
-  return { challenge, submissions };
+  return challenge;
 };
 
 export const submitToChallenge = async (id, data) => {

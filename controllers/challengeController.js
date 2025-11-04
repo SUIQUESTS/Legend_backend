@@ -20,13 +20,20 @@ export const getAllChallenges = async (req, res) => {
 
 export const getChallengeById = async (req, res) => {
   try {
-    const data = await challengeService.getChallengeById(req.params.id);
-    res.json(data);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
+    const{id} = req.params;
+    const challenge = await challengeService.getChallengeById(id);
+    
+    res.status(200).json({
+        message: "Challenge is retrieved successfully",
+        data: challenge,
+    });
+} catch (error) {
+    console.error("error fetching challenge:", error);
+    res.status(404).json({
+        message: error.message || "Challenge not found"
+    })
+ };
+}
 export const submitToChallenge = async (req, res) => {
   try {
     const submission = await challengeService.submitToChallenge(req.params.id, req.body);
