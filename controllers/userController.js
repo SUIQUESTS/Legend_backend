@@ -23,6 +23,6 @@ export const getProfile = async (request, response) => {
         const user = await userService.getProfile(request.params.walletAddress);
         response.json(user);
     }catch(error){
-        response.status(404).json({message:err.message });
+        response.status(404).json({message:error.message });
     };
 }
