@@ -30,8 +30,15 @@ export const submitToChallenge = async (id, data) => {
     participant_address: data.participant_address,
     submission_link: data.submission_link,
   });
-   challenge.submissions.push(submission._id);
-   await challenge.save();
+
+  console.log("✅ Submission created:", submission);
+
+   await Challenge.findByIdAndUpdate(
+  id,
+  { $push: { submissions: submission._id } },
+  { new: true }
+);
+console.log("✅ Challenge updated:", challenge);
 
    return submission;
 };
