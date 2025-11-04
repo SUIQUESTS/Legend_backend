@@ -20,7 +20,7 @@ export const getAllChallenges = async (req, res) => {
 
 export const getChallengeById = async (req, res) => {
   try {
-    const{id} = req.params;
+    const {id} = req.params;
     const challenge = await challengeService.getChallengeById(id);
     
     res.status(200).json({

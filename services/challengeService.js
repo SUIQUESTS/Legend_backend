@@ -10,7 +10,7 @@ export const getAllChallenges = async () => {
 };
 
 export const getChallengeById = async (id) => {
-  const challenge = await Challenge.findById(id).populate("submissions");
+  const challenge = await Challenge.findById({challenge:id}).populate("submissions");
   if (!challenge) throw new Error("Challenge not found");
   return challenge;
 };
@@ -20,6 +20,11 @@ export const submitToChallenge = async (id, data) => {
   if (!challenge) throw new Error("Challenge not found");
   if (challenge.status === "completed") throw new Error("Challenge is closed");
 
+  const participantLimitIsExceeded = challenge.participantLimit && challenge.submissions.length >= challenge.participantLimit;
+  if(participantLimitIsExceeded){
+    throw new Error("Partcipant limit reached for this challenge");
+  }
+  
   const submission = await Submission.create({
     challenge: id,
     participant_address: data.participant_address,
