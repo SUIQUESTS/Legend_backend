@@ -42,5 +42,13 @@ export const getSubmissionsByUser = async (walletAddress) => {
 };
 
 export const completeChallenge = async (id) => {
-  return await Challenge.findByIdAndUpdate(id, { status: "completed" }, { new: true });
+  const challenge = await Challenge.findByIdAndUpdate(
+    id,
+    { status: "completed" },
+    { new: true }
+  ).populate("submissions");
+
+  if (!challenge) throw new Error("Challenge not found");
+
+  return challenge;
 };
