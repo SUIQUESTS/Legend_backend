@@ -1,5 +1,5 @@
-import Challenge from "../models/challengeModel.js";
-import Submission from "../models/submissionModel.js";
+import Challenge from "../models/Challenge.js";
+import Submission from "../models/Submission.js";
 
 export const createChallenge = async (data) => {
   return await Challenge.create(data);
