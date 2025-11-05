@@ -9,4 +9,7 @@ router.get("/:id", challengeController.getChallengeById);
 router.post("/:id/submit", challengeController.submitToChallenge);
 router.get("/user/:walletAddress", challengeController.getSubmissionsByUser);
 router.put("/:id/complete", challengeController.completeChallenge);
+router.put("/select-winner", challengeController.ChallengeWinner);
+
 export default router;
+
