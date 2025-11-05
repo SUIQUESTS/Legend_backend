@@ -1,5 +1,6 @@
 import * as challengeService from "../services/challengeService.js";
 
+
 export const createChallenge = async (req, res) => {
   try {
     const challenge = await challengeService.createChallenge(req.body);
