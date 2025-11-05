@@ -64,13 +64,15 @@ export const completeChallenge = async (req, res) => {
 export const selectWinner = async (req, res) => {
   try {
     const { challengeId, winnerId } = req.body;
-    const currentUserId = req.user.id;
 
-    const challenge = await selectWinnerService(challengeId, winnerId, currentUserId);
+    if (!challengeId || !winnerId) {
+      return res.status(400).json({ message: "Both challengeId and winnerId are required" });
+    }
 
+    const updatedChallenge = await challengeService.setChallengeWinner(challengeId, winnerId);
     res.status(200).json({
-      message: "Winner selected successfully",
-      challenge,
+      message: "Winner has been successfully set",
+      data: updatedChallenge,
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
