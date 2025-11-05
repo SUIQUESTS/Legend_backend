@@ -69,7 +69,7 @@ export const selectWinner = async (req, res) => {
       return res.status(400).json({ message: "Both challengeId and winnerId are required" });
     }
 
-    const updatedChallenge = await challengeService.setChallengeWinner(challengeId, winnerId);
+    const updatedChallenge = await challengeService.selectWinnerService(challengeId, winnerId);
     res.status(200).json({
       message: "Winner has been successfully set",
       data: updatedChallenge,
