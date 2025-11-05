@@ -26,7 +26,7 @@ export const getChallengeById = async (req, res) => {
     res.status(200).json({
         message: "Challenge is retrieved successfully",
         data: challenge,
-    });
+    }); 
 } catch (error) {
     console.error("error fetching challenge:", error);
     res.status(404).json({
@@ -56,6 +56,22 @@ export const completeChallenge = async (req, res) => {
   try {
     const updated = await challengeService.completeChallenge(req.params.id);
     res.json(updated);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const selectWinner = async (req, res) => {
+  try {
+    const { challengeId, winnerId } = req.body;
+    const currentUserId = req.user.id;
+
+    const challenge = await selectWinnerService(challengeId, winnerId, currentUserId);
+
+    res.status(200).json({
+      message: "Winner selected successfully",
+      challenge,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

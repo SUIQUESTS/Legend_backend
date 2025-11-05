@@ -59,3 +59,30 @@ export const completeChallenge = async (id) => {
 
   return challenge;
 };
+
+export const selectWinnerService = async (challengeId, winnerId, currentUserId) => {
+  const challenge = await Challenge.findById(challengeId).populate("submissions");
+
+  if (!challenge) {throw new Error("Challenge not found");}
+
+  if (challenge.creator.toString() !== currentUserId.toString()) {
+    throw new Error("Unauthorized: Only the creator can select a winner");
+  }
+
+  if (challenge.winner) {throw new Error("Winner has already been selected");}
+
+  const isValidWinner = challenge.submissions.some(
+    (sub) => sub.participant_address.toString() === winnerId
+  );
+
+  if (!isValidWinner) {
+    throw new Error("Winner must be one of the participants");
+  }
+
+  challenge.winner = winnerId;
+  challenge.status = "completed";
+  await challenge.save();
+
+  return challenge;
+};
+
