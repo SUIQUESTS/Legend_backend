@@ -23,7 +23,6 @@ const challengeSchema = new mongoose.Schema({
 
     winner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
     default: null,
   },
 },{timestamps: true});
