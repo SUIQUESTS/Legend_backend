@@ -61,17 +61,17 @@ export const completeChallenge = async (req, res) => {
   }
 };
 
-export const selectWinner = async (req, res) => {
+export const ChallengeWinner = async (req, res) => {
   try {
-    const { challengeId, winnerId } = req.body;
+    const { challengeId, winnerId, creator } = req.body; // include creator in body
 
-    if (!challengeId || !winnerId) {
-      return res.status(400).json({ message: "Both challengeId and winnerId are required" });
+    if (!challengeId || !winnerId || !creator) {
+      return res.status(400).json({ message: "challengeId, winnerId, and creator are required" });
     }
 
-    const updatedChallenge = await challengeService.selectWinnerService(challengeId, winnerId);
+    const updatedChallenge = await challengeService.ChallengeWinner(challengeId, winnerId, creator);
     res.status(200).json({
-      message: "Winner has been successfully set",
+      message: "Winner has been successfully selected",
       data: updatedChallenge,
     });
   } catch (error) {
