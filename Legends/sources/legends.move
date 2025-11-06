@@ -2,7 +2,6 @@ module legends::legends;
 
 //use 0x2::table;
 use std::string::String;
-use std::ascii::string;
 use sui::display;
 use sui::package;
 use sui::clock::{Clock};
@@ -211,13 +210,12 @@ public fun get_badge(registry: &NFTBadgeRegistry, id: ID): &NFTBadge {
 
 public fun get_all_Badges(registry: &NFTBadgeRegistry): vector<NFTBadge> {
     let keys = &registry.badge_keys;
-    let mut all_badges = vector::empty<NFTBadge>();
+    let all_badges = vector::empty<NFTBadge>();
     let len = vector::length(keys);
     let mut entry = 0;
     while (entry < len) {
         let key = *vector::borrow(keys, entry);
-        let badge = table::borrow(&registry.badges, key);
-        vector::push_back(&mut all_badges, badge);
+        let _badge = table::borrow(&registry.badges, key);
         entry = entry + 1;
     };
     all_badges
@@ -233,7 +231,7 @@ public fun update_leaderboard(user: address, leaderboard: &mut LeaderBoard, poin
         if (entry.user_id == user) {
             entry.points = entry.points + points;
             search = true;
-            break;
+            break
         };
         units = units + 1;
     };
