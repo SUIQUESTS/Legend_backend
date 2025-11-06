@@ -20,7 +20,7 @@ export const submitToChallenge = async (id, data) => {
   if (!challenge) throw new Error("Challenge not found");
   if (challenge.status === "completed") throw new Error("Challenge is closed");
 
-  const participantLimitIsExceeded = challenge.participantLimit && challenge.submissions.length >= challenge.participantLimit;
+  const participantLimitIsExceeded = challenge.participant_limit && challenge.submissions.length >= challenge.participant_limit;
   if(participantLimitIsExceeded){
     throw new Error("Partcipant limit reached for this challenge");
   }
