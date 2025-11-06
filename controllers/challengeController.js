@@ -5,7 +5,7 @@ export const createChallenge = async (req, res) => {
   try {
     const data = {
       ...req.body,
-      participantLimit: req.body.participantLimit
+      participant_limit: req.body.participantLimit
         ? Number(req.body.participantLimit)
         : null
     };

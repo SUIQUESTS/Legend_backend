@@ -7,7 +7,7 @@ const challengeSchema = new mongoose.Schema({
 
     description:{type:String,required: true},
 
-    participantLimit:{type:Number,default:null},
+    participant_limit:{type:Number,default:null},
 
     deadline:{type:Date,required:true},
 
@@ -20,7 +20,7 @@ const challengeSchema = new mongoose.Schema({
     submissions: [{type: mongoose.Schema.Types.ObjectId, ref: "Submission"}],
 
     winner: { type: String, default: null }
-    
+
 },{timestamps: true});
 
 const Challenge = mongoose.model("Challenge", challengeSchema);
