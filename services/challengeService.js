@@ -64,36 +64,21 @@ export const ChallengeWinner = async (challengeId, winnerId, creator) => {
   const challenge = await Challenge.findById(challengeId)
     .populate("submissions");
 
-  if (!challenge) {
-    throw new Error("Challenge not found");
-  }
+  if (!challenge) {throw new Error("Challenge not found");}
 
-  // ✅ Only the creator can pick a winner
-  if (challenge.creator !== creator) {
-    throw new Error("Unauthorized: Only the challenge creator can select a winner");
-  }
+  if (challenge.creator !== creator) {throw new Error("Unauthorized: Only the challenge creator can select a winner");}
 
-  // ✅ Don’t require it to be completed before selecting
-  if (challenge.status === "completed") {
-    throw new Error("This challenge already has a winner");
-  }
+  if (challenge.status === "completed") {throw new Error("This challenge already has a winner");}
 
-  // ✅ Check if winner participated in this challenge
   const validWinner = challenge.submissions.some(
-    (submission) =>
-      submission.participant_address === winnerId // if you store wallet address
-  );
+    (submission) => submission.participant_address === winnerId );
 
-  if (!validWinner) {
-    throw new Error("The selected winner did not participate in this challenge");
-  }
+  if (!validWinner) {throw new Error("The selected winner did not participate in this challenge");}
 
-  // ✅ Set winner + mark completed
   challenge.winner = winnerId;
   challenge.status = "completed";
   await challenge.save();
 
-  // ✅ Return updated object with winner populated
   const updatedChallenge = await Challenge.findById(challengeId)
     .populate("winner", "name walletAddress _id") // if linked to User model
     .populate("submissions");

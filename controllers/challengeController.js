@@ -3,12 +3,20 @@ import * as challengeService from "../services/challengeService.js";
 
 export const createChallenge = async (req, res) => {
   try {
-    const challenge = await challengeService.createChallenge(req.body);
+    const data = {
+      ...req.body,
+      participantLimit: req.body.participantLimit
+        ? Number(req.body.participantLimit)
+        : null
+    };
+
+    const challenge = await challengeService.createChallenge(data);
     res.status(201).json(challenge);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 export const getAllChallenges = async (req, res) => {
   try {
