@@ -9,8 +9,6 @@ const challengeSchema = new mongoose.Schema({
 
     participantLimit:{type:Number,default:null},
 
-    submissionRequirement:{type:String,default:"media link"},
-
     deadline:{type:Date,required:true},
 
     nft_id:{type:String,required:true},
@@ -21,8 +19,8 @@ const challengeSchema = new mongoose.Schema({
 
     submissions: [{type: mongoose.Schema.Types.ObjectId, ref: "Submission"}],
 
-    winner: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null }
-
+    winner: { type: String, default: null }
+    
 },{timestamps: true});
 
 const Challenge = mongoose.model("Challenge", challengeSchema);
