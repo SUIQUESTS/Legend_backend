@@ -90,3 +90,24 @@ export const ChallengeWinner = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getChallengesByCreator = async (req, res) => {
+  try {
+    const { creatorAddress } = req.params;
+    const { status, page = 1, limit = 10 } = req.query;
+    const result = await challengeService.findChallengesByCreator(
+      creatorAddress,
+      status,
+      parseInt(page),
+      parseInt(limit)
+    );
+    res.status(200).json({
+      message: "Challenges retrieved successfully",
+      ...result
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+

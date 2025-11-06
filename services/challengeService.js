@@ -86,3 +86,28 @@ export const ChallengeWinner = async (challengeId, winnerId, creator) => {
   return updatedChallenge;
 };
 
+export const findChallengesByCreator = async (creatorAddress, status, page, limit) => {
+  const filter = { creator: creatorAddress };
+  if (status) filter.status = status;
+
+  const skip = (page - 1) * limit;
+
+  const [challenges, total] = await Promise.all([
+    Challenge.find(filter)
+      .populate("submissions")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Challenge.countDocuments(filter)
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    creator: creatorAddress,
+    totalChallenges: total,
+    currentPage: page,
+    totalPages,
+    challenges
+  };
+};
