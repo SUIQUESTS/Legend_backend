@@ -21,10 +21,8 @@ const challengeSchema = new mongoose.Schema({
 
     submissions: [{type: mongoose.Schema.Types.ObjectId, ref: "Submission"}],
 
-    winner: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: null,
-  },
+    winner: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null }
+
 },{timestamps: true});
 
 const Challenge = mongoose.model("Challenge", challengeSchema);
