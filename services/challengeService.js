@@ -1,4 +1,5 @@
 import Challenge from "../models/Challenge.js";
+import RewardNFT from "../models/RewardNFT.js";
 import Submission from "../models/Submission.js";
 
 export const createChallenge = async (data) => {
@@ -60,9 +61,8 @@ export const completeChallenge = async (id) => {
   return challenge;
 };
 
-export const ChallengeWinner = async (challengeId, winnerId, creator) => {
-  const challenge = await Challenge.findById(challengeId)
-    .populate("submissions");
+export const ChallengeWinner = async (challengeId, winnerAddress, creator) => {
+  const challenge = await Challenge.findById(challengeId).populate("submissions");
 
   if (!challenge) {throw new Error("Challenge not found");}
 
@@ -71,19 +71,34 @@ export const ChallengeWinner = async (challengeId, winnerId, creator) => {
   if (challenge.status === "completed") {throw new Error("This challenge already has a winner");}
 
   const validWinner = challenge.submissions.some(
-    (submission) => submission.participant_address === winnerId );
+    (submission) => submission.participant_address === winnerAddress );
 
   if (!validWinner) {throw new Error("The selected winner did not participate in this challenge");}
 
-  challenge.winner = winnerId;
+  const nft = await RewardNFT.findOne({challengeId});
+  if(!nft) throw new Error("No NFt linked to this challenge");
+
+  challenge.winner = winnerAddress
   challenge.status = "completed";
   await challenge.save();
 
-  const updatedChallenge = await Challenge.findById(challengeId)
-    .populate("winner", "name walletAddress _id") // if linked to User model
-    .populate("submissions");
+  const achievement = await UserAchievement.create({
+    userAddress: winnerAddress,
+    nft_id: nft.nft_id,
+    image: nft.image,
+    title: challenge.title,
+    points: nft.points,
+    challengeId: challenge._id,
+  });
 
-  return updatedChallenge;
+  nft.transferred = true
+  await nft.save();
+
+  return {
+    message:"Winner selected successfully",
+    challenge,
+    achievement,
+  };
 };
 
 export const findChallengesByCreator = async (creatorAddress, status, page, limit) => {
@@ -109,5 +124,23 @@ export const findChallengesByCreator = async (creatorAddress, status, page, limi
     currentPage: page,
     totalPages,
     challenges
+  };
+};
+
+export const getUserChallenges = async (walletAddress) =>{
+  const userSubmissions = await Submission.find({participant_address: walletAddress});
+
+  const won = await Challenge.find({winner: walletAddress})
+  .populate("submissions")
+  .sort({createdAt: -1});
+
+  const active = await Challenge.find({status: "active"})
+  .populate("submissions")
+  .sort({createdAt: -1});
+
+  return{
+    walletAddress,
+    won,
+    active
   };
 };

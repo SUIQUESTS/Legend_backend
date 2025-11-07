@@ -1,5 +1,5 @@
 import * as challengeService from "../services/challengeService.js";
-
+import * as Achievement from "../models/Achievement.js"
 
 export const createChallenge = async (req, res) => {
   try {
@@ -105,6 +105,29 @@ export const getChallengesByCreator = async (req, res) => {
       message: "Challenges retrieved successfully",
       ...result
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getUserChallenges = async (req, res) => {
+  try {
+    const { walletAddress } = req.params;
+    const result = await challengeService.getUserChallenges(walletAddress);
+    res.status(200).json({
+      message: "User challenges retrieved successfully",
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const getUserAchievements = async (req, res) => {
+  try {
+    const { userAddress } = req.params;
+    const achievements = await Achievement.find({ userAddress }).sort({ dateEarned: -1 });
+    res.status(200).json(achievements);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
