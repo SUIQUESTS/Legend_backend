@@ -65,7 +65,7 @@ export const completeChallenge = async (id) => {
 
 
 export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, creatorAddress = null) => {
-  const challenge = await Challenge.findById(challengeId);
+  const challenge = await Challenge.findById(challengeId).populate("submissions");
   if (!challenge) throw new Error("Challenge not found");
 
   if (creatorAddress && challenge.creator !== creatorAddress) {
