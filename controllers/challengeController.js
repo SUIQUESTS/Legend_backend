@@ -4,7 +4,7 @@ import * as Challenge from "../models/Challenge.js"
 
 export const createChallenge = async (req, res) => {
   try {
-    const challenge = await Challenge.create(req.body);
+    const challenge = await Challenge.createChallenge(req.body);
     res.status(201).json(challenge);
   } catch (error) {
     res.status(400).json({ message: error.message });
