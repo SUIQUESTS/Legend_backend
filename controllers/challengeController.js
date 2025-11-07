@@ -4,17 +4,13 @@ import * as Challenge from "../models/Challenge.js"
 
 export const createChallenge = async (req, res) => {
   try {
-    const { title, description, nftId, deadline } = req.body;
-
-    const challenge = await Challenge.create({ title, description, deadline });
-    
-    await RewardNFT.findByIdAndUpdate(nftId, { challengeId: challenge._id });
-
-    res.status(201).json({ challenge });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const challenge = await Challenge.create(req.body);
+    res.status(201).json(challenge);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
+
 
 export const getAllChallenges = async (req, res) => {
   try {
@@ -124,11 +120,11 @@ export const getUserChallenges = async (req, res) => {
 export const getUserAchievements = async (req, res) => {
   try {
     const { userAddress } = req.params;
-    const achievements = await Achievement.find({ userAddress }).sort({ dateEarned: -1 });
+    const achievements = await UserAchievement.find({ userAddress })
+      .sort({ dateEarned: -1 });
     res.status(200).json(achievements);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 

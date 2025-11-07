@@ -10,8 +10,13 @@ const challengeSchema = new mongoose.Schema({
     participant_limit:{type:Number,default:null},
 
     deadline:{type:Date,required:true},
-
-    nft_id:{type:String,required:true},
+    
+    nft: {
+    nft_id: String,
+    title: String,
+    image: String,
+    points: Number
+  },
 
     status:{type:String,enum: ["active","completed"],default:"active"},
     

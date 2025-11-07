@@ -62,46 +62,31 @@ export const completeChallenge = async (id) => {
   return challenge;
 };
 
+
 export const ChallengeWinner = async (challengeId, winnerAddress, creator) => {
-  const challenge = await Challenge.findById(challengeId).populate("submissions");
+  const challenge = await Challenge.findById(challengeId);
 
-  if (!challenge) {throw new Error("Challenge not found");}
+  if (!challenge) throw new Error("Challenge not found");
+  if (challenge.creator !== creator)
+    throw new Error("Only the creator can select a winner");
+  if (challenge.status === "completed")
+    throw new Error("This challenge already has a winner");
 
-  if (challenge.creator !== creator) {throw new Error("Unauthorized: Only the challenge creator can select a winner");}
-
-  if (challenge.status === "completed") {throw new Error("This challenge already has a winner");}
-
-  const validWinner = challenge.submissions.some(
-    (submission) => submission.participant_address === winnerAddress );
-
-  if (!validWinner) {throw new Error("The selected winner did not participate in this challenge");}
-
-  const nft = await RewardNFT.findOne({challengeId});
-  if(!nft) throw new Error("No NFt linked to this challenge");
-
-  challenge.winner = winnerAddress
+  challenge.winner = winnerAddress;
   challenge.status = "completed";
   await challenge.save();
 
-  const achievement = await UserAchievement.create({
+  const achievement = await Achievement.create({
     userAddress: winnerAddress,
-    nft_id: nft.nft_id,
-    image: nft.image,
-    title: challenge.title,
-    points: nft.points,
-    challengeId: challenge._id,
+    nft_id: challenge.nft.nft_id,
+    title: challenge.nft.title,
+    image: challenge.nft.image,
+    points: challenge.nft.points,
+    challengeId: challenge._id
   });
 
-  nft.transferred = true
-  await nft.save();
-
-  return {
-    message:"Winner selected successfully",
-    challenge,
-    achievement,
-  };
+  return { message: "Winner selected successfully", achievement };
 };
-
 export const findChallengesByCreator = async (creatorAddress, status, page, limit) => {
   const filter = { creator: creatorAddress };
   if (status) filter.status = status;
