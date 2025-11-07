@@ -86,7 +86,7 @@ export const getChallengesByCreator = async (req, res) => {
   try {
     const { creatorAddress } = req.params;
     const { status, page = 1, limit = 10 } = req.query;
-    const result = await challengeService.findChallengesByCreator(
+    const result = await challengeService.getUserChallenges(
       creatorAddress,
       status,
       parseInt(page),
