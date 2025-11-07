@@ -79,6 +79,7 @@ export const ChallengeWinner = async (req, res) => {
     res.status(200).json({
       message: "Winner selected successfully",
       challenge: result.challenge,
+      nft: result.nft,
       achievement: result.achievement,
     });
   } catch (error) {

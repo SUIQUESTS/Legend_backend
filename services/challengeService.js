@@ -64,24 +64,26 @@ export const completeChallenge = async (id) => {
 
 
 
-export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, creatorAddress = null) => {
+export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, creatorAddress) => {
   const challenge = await Challenge.findById(challengeId).populate("submissions");
+
   if (!challenge) throw new Error("Challenge not found");
+  if (challenge.creator !== creatorAddress) throw new Error("Unauthorized: Only the creator can select a winner");
+  if (challenge.status === "completed") throw new Error("This challenge already has a winner");
 
-  if (creatorAddress && challenge.creator !== creatorAddress) {
-    throw new Error("Unauthorized: Only the challenge creator can select a winner");
-  }
-
-  if (challenge.status === "completed") {
-    throw new Error("This challenge has already been completed");
-  }
-
-  const validWinner = challenge.submissions?.some(
-    (s) => s.participant_address === winnerAddress
+  const validWinner = challenge.submissions.some(
+    (submission) => submission.participant_address === winnerAddress
   );
-  if (!validWinner) {
-    throw new Error("Selected winner did not participate in this challenge");
-  }
+  if (!validWinner) throw new Error("Selected winner did not participate in this challenge");
+
+  const nft = await RewardNFT.create({
+    nft_id: nftDetails.nft_id,
+    title: nftDetails.title || challenge.title,
+    image: nftDetails.image,
+    points: nftDetails.points || 100,
+    challengeId: challenge._id,
+    transferred: false
+  });
 
   challenge.winner = winnerAddress;
   challenge.status = "completed";
@@ -89,15 +91,14 @@ export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, cr
 
   const achievement = await Achievement.create({
     userAddress: winnerAddress,
-    nft_id: nftDetails.nft_id,
-    title: nftDetails.title,
-    image: nftDetails.image,
-    points: nftDetails.points,
-    challengeId: challengeId,
+    nft_id: nft.nft_id,
+    image: nft.image,
+    title: challenge.title,
+    points: nft.points,
+    challengeId: challenge._id,
   });
 
-
-  return { challenge, achievement };
+  return { challenge, achievement, nft };
 };
 
 export const getUserChallenges = async (walletAddress) =>{
