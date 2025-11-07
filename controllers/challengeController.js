@@ -66,19 +66,20 @@ export const completeChallenge = async (req, res) => {
 
 export const ChallengeWinner = async (req, res) => {
   try {
-    const { challengeId, winnerId, creator } = req.body;
+    const { challengeId, winnerAddress, nftDetails } = req.body;
+    const creatorAddress = req.headers["creator-address"];
 
-    if (!challengeId || !winnerId || !creator) {
-      return res.status(400).json({
-        message: "challengeId, winnerId, and creator are required",
-      });
-    }
-
-    const updatedChallenge = await challengeService.ChallengeWinner(challengeId, winnerId, creator);
+    const result = await ChallengeWinner(
+      challengeId,
+      winnerAddress,
+      nftDetails,
+      creatorAddress
+    );
 
     res.status(200).json({
-      message: "Winner has been successfully selected by the creator",
-      data: updatedChallenge,
+      message: "Winner selected successfully",
+      challenge: result.challenge,
+      achievement: result.achievement,
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -120,8 +121,7 @@ export const getUserChallenges = async (req, res) => {
 export const getUserAchievements = async (req, res) => {
   try {
     const { userAddress } = req.params;
-    const achievements = await Achievement.find({ userAddress })
-      .sort({ dateEarned: -1 });
+    const achievements = await Achievement({ userAddress });
     res.status(200).json(achievements);
   } catch (error) {
     res.status(500).json({ message: error.message });

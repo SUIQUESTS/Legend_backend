@@ -63,14 +63,25 @@ export const completeChallenge = async (id) => {
 };
 
 
-export const ChallengeWinner = async (challengeId, winnerAddress, creator) => {
-  const challenge = await Challenge.findById(challengeId);
 
+export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, creatorAddress = null) => {
+  const challenge = await Challenge.findById(challengeId);
   if (!challenge) throw new Error("Challenge not found");
-  if (challenge.creator !== creator)
-    throw new Error("Only the creator can select a winner");
-  if (challenge.status === "completed")
-    throw new Error("This challenge already has a winner");
+
+  if (creatorAddress && challenge.creator !== creatorAddress) {
+    throw new Error("Unauthorized: Only the challenge creator can select a winner");
+  }
+
+  if (challenge.status === "completed") {
+    throw new Error("This challenge has already been completed");
+  }
+
+  const validWinner = challenge.submissions?.some(
+    (s) => s.participant_address === winnerAddress
+  );
+  if (!validWinner) {
+    throw new Error("Selected winner did not participate in this challenge");
+  }
 
   challenge.winner = winnerAddress;
   challenge.status = "completed";
@@ -78,39 +89,15 @@ export const ChallengeWinner = async (challengeId, winnerAddress, creator) => {
 
   const achievement = await Achievement.create({
     userAddress: winnerAddress,
-    nft_id: challenge.nft.nft_id,
-    title: challenge.nft.title,
-    image: challenge.nft.image,
-    points: challenge.nft.points,
-    challengeId: challenge._id
+    nft_id: nftDetails.nft_id,
+    title: nftDetails.title,
+    image: nftDetails.image,
+    points: nftDetails.points,
+    challengeId: challengeId,
   });
 
-  return { message: "Winner selected successfully", achievement };
-};
-export const findChallengesByCreator = async (creatorAddress, status, page, limit) => {
-  const filter = { creator: creatorAddress };
-  if (status) filter.status = status;
 
-  const skip = (page - 1) * limit;
-
-  const [challenges, total] = await Promise.all([
-    Challenge.find(filter)
-      .populate("submissions")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit),
-    Challenge.countDocuments(filter)
-  ]);
-
-  const totalPages = Math.ceil(total / limit);
-
-  return {
-    creator: creatorAddress,
-    totalChallenges: total,
-    currentPage: page,
-    totalPages,
-    challenges
-  };
+  return { challenge, achievement };
 };
 
 export const getUserChallenges = async (walletAddress) =>{
