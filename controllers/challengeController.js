@@ -4,7 +4,7 @@ import * as Challenge from "../models/Challenge.js"
 
 export const createChallenge = async (req, res) => {
   try {
-    const challenge = await Challenge.createChallenge(req.body);
+    const challenge = await Challenge.create(req.body);
     res.status(201).json(challenge);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -120,7 +120,7 @@ export const getUserChallenges = async (req, res) => {
 export const getUserAchievements = async (req, res) => {
   try {
     const { userAddress } = req.params;
-    const achievements = await UserAchievement.find({ userAddress })
+    const achievements = await Achievement.find({ userAddress })
       .sort({ dateEarned: -1 });
     res.status(200).json(achievements);
   } catch (error) {
