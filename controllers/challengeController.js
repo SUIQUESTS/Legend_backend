@@ -1,6 +1,6 @@
 import * as challengeService from "../services/challengeService.js";
-import * as Achievement from "../models/Achievement.js"
-import * as Challenge from "../models/Challenge.js"
+import Achievement from "../models/Achievement.js";
+import Challenge from "../models/Challenge.js"; 
 
 export const createChallenge = async (req, res) => {
   try {
