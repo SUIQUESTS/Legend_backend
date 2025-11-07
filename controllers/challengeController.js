@@ -1,22 +1,20 @@
 import * as challengeService from "../services/challengeService.js";
 import * as Achievement from "../models/Achievement.js"
+import * as Challenge from "../models/Challenge.js"
 
 export const createChallenge = async (req, res) => {
   try {
-    const data = {
-      ...req.body,
-      participant_limit: req.body.participant_limit
-        ? Number(req.body.participant_limit)
-        : null
-    };
+    const { title, description, nftId, deadline } = req.body;
 
-    const challenge = await challengeService.createChallenge(data);
-    res.status(201).json(challenge);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    const challenge = await Challenge.create({ title, description, deadline });
+    
+    await RewardNFT.findByIdAndUpdate(nftId, { challengeId: challenge._id });
+
+    res.status(201).json({ challenge });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
-
 
 export const getAllChallenges = async (req, res) => {
   try {

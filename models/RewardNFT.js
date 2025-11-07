@@ -7,5 +7,5 @@ const RewardNFTSchema = new mongoose.Schema({
     points:{type:Number,required:true,default:0},
     challengeId:{type:mongoose.Schema.Types.ObjectId, ref:"Challenge", required:true},
     transferred:{type:Boolean,default: Date.now}
-});
+},{timestamps:true});
 export default mongoose.model("RewardNFT",RewardNFTSchema);
