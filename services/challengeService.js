@@ -68,7 +68,7 @@ export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, cr
   const challenge = await Challenge.findById(challengeId).populate("submissions");
 
   if (!challenge) throw new Error("Challenge not found");
-  if (challenge.creator !== creatorAddress) throw new Error("Unauthorized: Only the creator can select a winner");
+  //if (challenge.creator !== creatorAddress) throw new Error("Unauthorized: Only the creator can select a winner");
   if (challenge.status === "completed") throw new Error("This challenge already has a winner");
 
   const validWinner = challenge.submissions.some(
