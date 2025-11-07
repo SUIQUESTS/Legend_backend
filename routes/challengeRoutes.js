@@ -11,6 +11,6 @@ router.get("/user/:walletAddress", challengeController.getSubmissionsByUser);
 router.put("/:id/complete", challengeController.completeChallenge);
 router.put("/select-winner", challengeController.ChallengeWinner);
 router.get("/creator/:creatorAddress", challengeController.getChallengesByCreator);
-router.get("/:userAddress/achievements", getUserAchievements);
+router.get("/:userAddress/achievements", challengeController.getUserAchievements);
 export default router;
 

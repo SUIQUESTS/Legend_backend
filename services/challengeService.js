@@ -1,6 +1,7 @@
 import Challenge from "../models/Challenge.js";
 import RewardNFT from "../models/RewardNFT.js";
 import Submission from "../models/Submission.js";
+import Achievement from "../models/Achievement.js";
 
 export const createChallenge = async (data) => {
   return await Challenge.create(data);
@@ -143,4 +144,9 @@ export const getUserChallenges = async (walletAddress) =>{
     won,
     active
   };
+};
+
+
+export const getUserAchievements = async (userAddress) => {
+  return await Achievement.find({ userAddress }).sort({ createdAt: -1 });
 };
