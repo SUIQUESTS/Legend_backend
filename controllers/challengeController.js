@@ -69,7 +69,7 @@ export const ChallengeWinner = async (req, res) => {
     const { challengeId, winnerAddress, nftDetails } = req.body;
     const creatorAddress = req.headers["creator-address"];
 
-    const result = await ChallengeWinner(
+    const result = await challengeService.ChallengeWinner(
       challengeId,
       winnerAddress,
       nftDetails,
