@@ -76,12 +76,7 @@ export const ChallengeWinner = async (req, res) => {
       creatorAddress
     );
 
-    res.status(200).json({
-      message: "Winner selected successfully",
-      challenge: result.challenge,
-      nft: result.nft,
-      achievement: result.achievement,
-    });
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -122,8 +117,16 @@ export const getUserChallenges = async (req, res) => {
 export const getUserAchievements = async (req, res) => {
   try {
     const { userAddress } = req.params;
-    const achievements = await Achievement({ userAddress });
-    res.status(200).json(achievements);
+    const achievements = await challengeService.getUserAchievements(userAddress);
+
+    if (!achievements.length) {
+      return res.status(404).json({ message: "No achievements found for this user" });
+    }
+
+    res.status(200).json({
+      userAddress,
+      achievements
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

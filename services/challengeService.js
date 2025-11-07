@@ -80,15 +80,12 @@ export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, cr
     nft_id: nftDetails.nft_id,
     title: nftDetails.title || challenge.title,
     image: nftDetails.image,
-    points: nftDetails.points || 100,
+    points: nftDetails.points,
     challengeId: challenge._id,
     transferred: false
   });
 
-  challenge.winner = winnerAddress;
-  challenge.status = "completed";
-  await challenge.save();
-
+  
   const achievement = await Achievement.create({
     userAddress: winnerAddress,
     nft_id: nft.nft_id,
@@ -98,7 +95,15 @@ export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, cr
     challengeId: challenge._id,
   });
 
-  return { challenge, achievement, nft };
+  challenge.winner = winnerAddress;
+  challenge.status = "completed";
+  await challenge.save();
+
+  return {
+    message: "Winner selected successfully",
+    challenge,
+    achievement: achievement
+  };
 };
 
 export const getUserChallenges = async (walletAddress) =>{
@@ -121,5 +126,6 @@ export const getUserChallenges = async (walletAddress) =>{
 
 
 export const getUserAchievements = async (userAddress) => {
-  return await Achievement.find({ userAddress }).sort({ createdAt: -1 });
+ const achievements = await Achievement.find({ userAddress }).sort({ createdAt: -1 });
+  return achievements;
 };
