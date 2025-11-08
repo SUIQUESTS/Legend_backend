@@ -132,3 +132,14 @@ export const getUserAchievements = async (req, res) => {
   }
 };
 
+export const getLeaderboard = async (req, res) => {
+  try {
+    const leaderboard = await challengeService.getLeaderBoard();
+    res.status(200).json({
+      message: "Leaderboard retrieved successfully",
+      data: leaderboard,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

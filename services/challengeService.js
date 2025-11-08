@@ -2,6 +2,9 @@ import Challenge from "../models/Challenge.js";
 import RewardNFT from "../models/RewardNFT.js";
 import Submission from "../models/Submission.js";
 import Achievement from "../models/Achievement.js";
+import NodeCache from "node-cache";
+
+const leaderboardCache = new NodeCache({ stdTTL: 300 });
 
 export const createChallenge = async (data) => {
   return await Challenge.create(data);
@@ -99,10 +102,19 @@ export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, cr
   challenge.status = "completed";
   await challenge.save();
 
+  await User.updateOne(
+    {walletAddress: winnerAddress},
+    {$inc:{totalPoints: nft.points || 0}},
+    {upsert:true}
+  );
+
+  leaderboardCache.del("leaderboard");
+
   return {
     message: "Winner selected successfully",
     challenge,
-    achievement: achievement
+    achievement: achievement,
+    pointsAwarded:nft.points
   };
 };
 
@@ -128,4 +140,32 @@ export const getUserChallenges = async (walletAddress) =>{
 export const getUserAchievements = async (userAddress) => {
  const achievements = await Achievement.find({ userAddress }).sort({ createdAt: -1 });
   return achievements;
+};
+
+export const getLeaderBoard = async () => {
+  const cached = leaderboardCache.get("leaderboard");
+  if(cached) return cached;
+
+  const leaderboard = await Achievement.aggregate([
+    {
+      $group:{
+        _id:"$userAddress",
+        totalPoints: {$sum: "$points"},
+      },
+    },
+    {$sort:{totalPoints: -1}},
+  ]);
+  const results = await Promise.all(
+    leaderboard.map(async (entry) =>{
+      const user = await User.findOne({walletAddress:entry._id});
+      return{
+        userAddress:entry._id,
+        totalPoints:entry.totalPoints,
+        name: user?.username,
+        profilePicture:user?.profilePicture
+      };
+    })
+  );
+  leaderboardCache.set("leaderboard",results);
+  return results;
 };

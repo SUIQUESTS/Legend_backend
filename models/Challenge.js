@@ -19,7 +19,9 @@ const challengeSchema = new mongoose.Schema({
 
     submissions: [{type: mongoose.Schema.Types.ObjectId, ref: "Submission"}],
 
-    winner: { type: String, default: null }
+    winner: { type: String, default: null },
+
+    rewardPoints: { type: Number, default: 100 }
 
 },{timestamps: true});
 
