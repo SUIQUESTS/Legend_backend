@@ -1,3 +1,4 @@
+import User from "../models/User.js";
 import Challenge from "../models/Challenge.js";
 import RewardNFT from "../models/RewardNFT.js";
 import Submission from "../models/Submission.js";
