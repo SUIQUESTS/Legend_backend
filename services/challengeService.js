@@ -162,7 +162,7 @@ export const getLeaderBoard = async () => {
       return{
         userAddress:entry._id,
         totalPoints:entry.totalPoints,
-        name: user?.username,
+        name: user?.name,
         profilePicture:user?.profilePicture
       };
     })
