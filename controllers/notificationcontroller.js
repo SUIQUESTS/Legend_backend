@@ -23,3 +23,17 @@ export const getNotifications = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const deleteNotification = async (req, res) => {
+    try {
+        const { notificationId } = req.params;
+        const notification = await notificationService.deleteNotification(notificationId);
+        if (notification) {
+            res.status(200).json({ message: "Notification deleted successfully" });
+        } else {
+            res.status(404).json({ message: "Notification not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting notification:", error);
+        res.status(500).json({ message: error.message });
+    }
+}

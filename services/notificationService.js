@@ -19,3 +19,11 @@ const cached = notificationCache.get(userAddress);
   notificationCache.set(userAddress, notifications);
   return notifications;
 };
+
+export const deleteNotification = async (notificationId) => {
+  const notification = await Notification.findByIdAndDelete(notificationId);
+  if (notification) {
+    notificationCache.del(notification.userAddress);
+  }
+  return notification;
+};
