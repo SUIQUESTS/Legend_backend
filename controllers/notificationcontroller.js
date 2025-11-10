@@ -1,6 +1,6 @@
 import * as notificationService from "../services/notificationService.js";
 
-export const createNotification = async (req, res) => {
+export const createNotificationController = async (req, res) => {
   try {
     const notification = await notificationService.createNotification(req.body);
     res.status(201).json({
@@ -13,7 +13,7 @@ export const createNotification = async (req, res) => {
   }
 };
 
-export const getNotifications = async (req, res) => {
+export const getNotificationsController = async (req, res) => {
   try {
     const { walletAddress } = req.params;
     const notifications = await notificationService.getNotifications(walletAddress);
@@ -26,17 +26,18 @@ export const getNotifications = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-export const deleteNotification = async (req, res) => {
-    try {
-        const { notificationId } = req.params;
-        const notification = await notificationService.deleteNotification(notificationId);
-        if (notification) {
-            res.status(200).json({ message: "Notification deleted successfully" });
-        } else {
-            res.status(404).json({ message: "Notification not found" });
-        }
-    } catch (error) {
-        console.error("Error deleting notification:", error);
-        res.status(500).json({ message: error.message });
+
+export const deleteNotificationController = async (req, res) => {
+  try {
+    const { notificationId } = req.params;
+    const notification = await notificationService.deleteNotification(notificationId);
+    if (notification) {
+      res.status(200).json({ message: "Notification deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Notification not found" });
     }
-}
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
