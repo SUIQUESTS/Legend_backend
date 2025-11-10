@@ -5,12 +5,13 @@ const notificationCache = new NodeCache({ stdTTL: 60 });
 
 export const createNotification = async (data) => {
   const notification = await Notification.create(data);
-  notificationCache.del(data.userAddress); // clear cache for this user
+  notificationCache.del(data.userAddress); 
   return notification;
 };
 
 export const getNotifications = async (walletAddress) => {
-  const cached = notificationCache.get(walletAddress);
+  const cached = notificationCache.get(walletAddress); 
+
   if (cached) return cached;
 
   const notifications = await Notification.find({ userAddress: walletAddress })
