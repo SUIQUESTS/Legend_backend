@@ -3,6 +3,8 @@ import Challenge from "../models/Challenge.js";
 import RewardNFT from "../models/RewardNFT.js";
 import Submission from "../models/Submission.js";
 import Achievement from "../models/Achievement.js";
+import Notification from "../models/Notification.js";
+import { createNotification } from "./notificationService.js";
 import NodeCache from "node-cache";
 
 const leaderboardCache = new NodeCache({ stdTTL: 300 });
@@ -99,6 +101,13 @@ export const ChallengeWinner = async (challengeId, winnerAddress, nftDetails, cr
     challengeId: challenge._id,
   });
 
+  await createNotification({
+  userAddress: winnerAddress,
+  type: "challenge_win",
+  title: "🎉 Congratulations!",
+  message: `You won the "${challenge.title}" challenge and earned ${nft.points} points.`,
+  });
+
   challenge.winner = winnerAddress;
   challenge.status = "completed";
   await challenge.save();
@@ -169,4 +178,5 @@ export const getLeaderBoard = async () => {
   );
   leaderboardCache.set("leaderboard",results);
   return results;
+
 };
