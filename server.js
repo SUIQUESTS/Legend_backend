@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import challengeRoutes from "./routes/challengeRoutes.js"
-import notificationRoutes from "./routes/notificationRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js"
 
 dotenv.config();
 const app = express();
