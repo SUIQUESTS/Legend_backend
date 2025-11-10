@@ -1,12 +1,15 @@
 import * as notificationService from "../services/notificationService.js";
 
-export const createNotification = async (data) => {
+export const createNotification = async (req, res) => {
   try {
-    const notification = await notificationService.createNotification(data);
-    return notification;
-  }catch (error) {
+    const notification = await notificationService.createNotification(req.body);
+    res.status(201).json({
+      message: "Notification created successfully",
+      data: notification,
+    });
+  } catch (error) {
     console.error("Error creating notification:", error);
-    throw new Error("Failed to create notification");
+    res.status(500).json({ message: error.message });
   }
 };
 
